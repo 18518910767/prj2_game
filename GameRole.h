@@ -26,11 +26,17 @@ public:
 	virtual int GetX() override;
 	virtual int GetY() override;
 
+	/*创建上线时的id和姓名消息*/
 	GameMessage *MakeLogonSyncPid();
+	/*创建广播聊天消息*/
 	GameMessage *MakeTalkBroadcast(std::string _talkContent);
+	/*创建广播出生位置消息*/
 	GameMessage *MakeInitPosBroadcast();
+	/*创建广播移动后新位置消息*/
 	GameMessage *MakeNewPosBroadcast();
+	/*创建下线时的id和姓名消息*/
 	GameMessage *MakeLogoffSyncPid();
+	/*创建周围玩家位置消息*/
 	GameMessage *MakeSurPlays();
 };
 
