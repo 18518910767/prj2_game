@@ -45,5 +45,7 @@ public:
 	void DelPlayer(AOI_Player *_player);
 	static AOI_world *pxWorld;
 	static AOI_world *GetWorld();
+	/*判断新坐标是否跨格*/
+	bool GridChanged(AOI_Player *_player, int _newX, int _newY);
 };
 

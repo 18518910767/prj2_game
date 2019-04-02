@@ -116,3 +116,13 @@ AOI_world * AOI_world::GetWorld()
 
 	return pxWorld;
 }
+
+bool AOI_world::GridChanged(AOI_Player * _player, int _newX, int _newY)
+{
+	int x = _player->GetX();
+	int y = _player->GetY();
+	int oldgid = (x - minX) / Xwidth() + (y - minY) / Ywidth()*Xcnt;
+	int newgid = (_newX - minX) / Xwidth() + (_newY - minY) / Ywidth()*Xcnt;
+
+	return oldgid != newgid;
+}

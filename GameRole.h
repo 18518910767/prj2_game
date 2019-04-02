@@ -3,6 +3,7 @@
 #include <string>
 #include "AOI_wolrd.h"
 #include "GameMessage.h"
+#include <list>
 
 
 class GameRole :
@@ -38,5 +39,9 @@ public:
 	GameMessage *MakeLogoffSyncPid();
 	/*创建周围玩家位置消息*/
 	GameMessage *MakeSurPlays();
+	/*处理视野丢失*/
+	void ViewLost(std::list<AOI_Player *> &newsurlist,std::list<AOI_Player *> &oldsurlist);
+	/*处理视野出现*/
+	void ViewAppear(std::list<AOI_Player *> &newsurlist, std::list<AOI_Player *> &oldsurlist);
 };
 
