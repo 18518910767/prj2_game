@@ -26,7 +26,7 @@ public:
 
 int main()
 {
-	/*
+
 	Server *pxServer = Server::GetServer();
 
 	pxServer->init();
@@ -34,8 +34,8 @@ int main()
 	pxServer->install_channel(new GameChannel());
 
 	pxServer->run();
-	*/
-	AOI_wolrd w(20, 200, 50, 230, 6, 6);
+	/*
+	AOI_world w(20, 200, 50, 230, 6, 6);
 
 	samplePlayer p1;
 	samplePlayer p2;
@@ -62,4 +62,5 @@ int main()
 	}
 
     return 0;
+	*/
 }

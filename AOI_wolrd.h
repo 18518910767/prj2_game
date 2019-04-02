@@ -20,16 +20,17 @@ public:
 	int iGID = 0;
 };
 
-class AOI_wolrd
+class AOI_world
 {
 private:
 	int Xwidth();
 	int Ywidth();
+	AOI_world(int _minx, int _maxx, int _miny, int _maxy, int _xcnt, int _ycnt);
 public:
 	/*存储若干个网格对象*/
 	std::vector<AOI_Grid *> m_grids;
-	AOI_wolrd(int _minx, int _maxx, int _miny, int _maxy, int _xcnt, int _ycnt);
-	virtual ~AOI_wolrd();
+	
+	virtual ~AOI_world();
 	/*六个变量用于记录网格划分的方法*/
 	int minX = 0;
 	int maxX = 0;
@@ -42,5 +43,7 @@ public:
 	/*添加和删除玩家*/
 	void AddPlayer(AOI_Player *_player);
 	void DelPlayer(AOI_Player *_player);
+	static AOI_world *pxWorld;
+	static AOI_world *GetWorld();
 };
 

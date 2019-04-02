@@ -2,17 +2,17 @@
 
 using namespace std;
 
-int AOI_wolrd::Xwidth()
+int AOI_world::Xwidth()
 {
 	return (maxX - minX) / Xcnt;
 }
 
-int AOI_wolrd::Ywidth()
+int AOI_world::Ywidth()
 {
 	return (maxY - minY) / Ycnt;
 }
 
-AOI_wolrd::AOI_wolrd(int _minx, int _maxx, int _miny, int _maxy, int _xcnt, int _ycnt):minX(_minx), maxX(_maxx), minY(_miny), maxY(_maxy), Xcnt(_xcnt), Ycnt(_ycnt)
+AOI_world::AOI_world(int _minx, int _maxx, int _miny, int _maxy, int _xcnt, int _ycnt):minX(_minx), maxX(_maxx), minY(_miny), maxY(_maxy), Xcnt(_xcnt), Ycnt(_ycnt)
 {
 	/*添加若干网格到向量*/
 	int n = Xcnt * Ycnt;
@@ -21,8 +21,8 @@ AOI_wolrd::AOI_wolrd(int _minx, int _maxx, int _miny, int _maxy, int _xcnt, int 
 		m_grids.push_back(new AOI_Grid(i));
 	}
 }
-
-AOI_wolrd::~AOI_wolrd()
+AOI_world *AOI_world::pxWorld = nullptr;
+AOI_world::~AOI_world()
 {
 	for (auto grid : m_grids)
 	{
@@ -30,7 +30,7 @@ AOI_wolrd::~AOI_wolrd()
 	}
 }
 
-std::list<AOI_Player*> AOI_wolrd::GetSurPlayers(AOI_Player * _player)
+std::list<AOI_Player*> AOI_world::GetSurPlayers(AOI_Player * _player)
 {
 	/*计算玩家所属的网格*/
 	int x = _player->GetX();
@@ -87,7 +87,7 @@ std::list<AOI_Player*> AOI_wolrd::GetSurPlayers(AOI_Player * _player)
 	return lRet;
 }
 
-void AOI_wolrd::AddPlayer(AOI_Player * _player)
+void AOI_world::AddPlayer(AOI_Player * _player)
 {
 	/*计算玩家所属的网格*/
 	int x = _player->GetX();
@@ -97,7 +97,7 @@ void AOI_wolrd::AddPlayer(AOI_Player * _player)
 	m_grids[n]->m_players.push_back(_player);
 }
 
-void AOI_wolrd::DelPlayer(AOI_Player * _player)
+void AOI_world::DelPlayer(AOI_Player * _player)
 {
 	/*计算玩家所属的网格*/
 	int x = _player->GetX();
@@ -105,4 +105,14 @@ void AOI_wolrd::DelPlayer(AOI_Player * _player)
 	int n = (x - minX) / Xwidth() + (y - minY) / Ywidth()*Xcnt;
 
 	m_grids[n]->m_players.remove(_player);
+}
+
+AOI_world * AOI_world::GetWorld()
+{
+	if (nullptr == pxWorld)
+	{
+		pxWorld = new AOI_world(85, 410, 75, 400, 10, 20);
+	}
+
+	return pxWorld;
 }
