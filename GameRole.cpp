@@ -3,6 +3,7 @@
 #include "msg.pb.h"
 #include "AOI_wolrd.h"
 #include <algorithm>
+#include <random>
 
 using namespace std;
 
@@ -103,12 +104,13 @@ public:
 };
 
 int g_iPidStart = 0;
+default_random_engine e(time(NULL));
 GameRole::GameRole()
 {
 	/*定义该玩家坐标和名称*/
-	x = 100;
+	x = 100 + e() % 20;
 	y = 0;
-	z = 100;
+	z = 100 + e() % 20;
 	v = 0;
 	szName = "abc";
 	/*定义玩家id*/
