@@ -2,6 +2,7 @@
 #include "GameChannel.h"
 #include "AOI_wolrd.h"
 #include <iostream>
+#include "RandomeName.h"
 
 using namespace std;
 
@@ -23,9 +24,58 @@ public:
 	}
 
 };
+extern RandomeName r;
+
+void daemonlize()
+{
+	/*启动守护进程*/
+	int pid;
+	if (0 > (pid=fork()))
+	{
+		exit(1);
+	}
+	else if (0 == pid)
+	{
+		/*子进程*/
+		setsid();
+		chdir("/");
+		/*重定向 0 1 2*/
+		int nullfd = open("/dev/null", O_RDWR);
+		dup2(nullfd, 0);
+		dup2(nullfd, 1);
+		dup2(nullfd, 2);
+		close(nullfd);
+	}
+	else {
+		exit(0);
+	}
+	/*父进程循环监控子进程*/
+
+	while (true)
+	{
+		if (0 < fork())
+		{
+			/*检查子进程退出，若退出则重新fork*/
+			int iRet;
+			wait(&iRet);
+		}
+		else
+		{
+			break;
+		}
+		
+	}
+
+}
 
 int main()
 {
+	daemonlize();
+
+	LOG_SetStdOut("/home/marklion/game_std_log.txt");
+	LOG_SetStdErr("/home/marklion/game_err_log.txt");
+
+	r.LoadFile();
 
 	Server *pxServer = Server::GetServer();
 

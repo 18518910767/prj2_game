@@ -2,6 +2,9 @@
 #include <string>
 #include <vector>
 
+#define RANDOM_FIRST_FILE "/random_first.txt"
+#define RANDOM_LAST_FILE "/random_last.txt"
+
 class FirstName {
 public:
 	std::string First;

@@ -4,6 +4,7 @@
 #include "AOI_wolrd.h"
 #include <algorithm>
 #include <random>
+#include "RandomeName.h"
 
 using namespace std;
 
@@ -105,6 +106,8 @@ public:
 
 int g_iPidStart = 0;
 default_random_engine e(time(NULL));
+RandomeName r;
+
 GameRole::GameRole()
 {
 	/*定义该玩家坐标和名称*/
@@ -112,7 +115,7 @@ GameRole::GameRole()
 	y = 0;
 	z = 100 + e() % 20;
 	v = 0;
-	szName = "abc";
+	szName = r.GetName();
 	/*定义玩家id*/
 	pid = g_iPidStart++;
 }
@@ -120,6 +123,7 @@ GameRole::GameRole()
 
 GameRole::~GameRole()
 {
+	r.ReleaseName(szName);
 }
 
 bool GameRole::init()
