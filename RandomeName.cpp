@@ -56,7 +56,9 @@ std::string RandomeName::GetName()
 	auto pxFirst = m_FirstPool[n];
 	string szFirst = pxFirst->First;
 	/*获取随机名*/
-	string szLast = pxFirst->m_last[e() % pxFirst->m_last.size()];
+	int nLastName = e() % pxFirst->m_last.size();
+	string szLast = pxFirst->m_last[nLastName];
+	pxFirst->m_last.erase(pxFirst->m_last.begin() + nLastName);
 
 	/*若名向量取完，则摘掉姓对象*/
 	if (pxFirst->m_last.size() <= 0)
