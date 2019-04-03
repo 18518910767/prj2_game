@@ -74,6 +74,9 @@
   <ImportGroup Label="Shared" />
   <ImportGroup Label="PropertySheets" />
   <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <IncludePath>zinx/include</IncludePath>
+  </PropertyGroup>
   <ItemGroup>
     <ClCompile Include="AOI_wolrd.cpp" />
     <ClCompile Include="GameChannel.cpp" />
@@ -83,6 +86,14 @@
     <ClCompile Include="main.cpp" />
     <ClCompile Include="msg.pb.cpp" />
     <ClCompile Include="RandomeName.cpp" />
+    <ClCompile Include="zinx\channel\Achannel.cpp" />
+    <ClCompile Include="zinx\channel\TcpChannel.cpp" />
+    <ClCompile Include="zinx\log.cpp" />
+    <ClCompile Include="zinx\message\Amessage.cpp" />
+    <ClCompile Include="zinx\protocol\Aprotocol.cpp" />
+    <ClCompile Include="zinx\role\Arole.cpp" />
+    <ClCompile Include="zinx\role\IdMsgRole.cpp" />
+    <ClCompile Include="zinx\server.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AOI_wolrd.h" />
@@ -92,10 +103,20 @@
     <ClInclude Include="GameRole.h" />
     <ClInclude Include="msg.pb.h" />
     <ClInclude Include="RandomeName.h" />
+    <ClInclude Include="zinx\include\Achannel.h" />
+    <ClInclude Include="zinx\include\Amessage.h" />
+    <ClInclude Include="zinx\include\Aprotocol.h" />
+    <ClInclude Include="zinx\include\Arole.h" />
+    <ClInclude Include="zinx\include\IdMsgRole.h" />
+    <ClInclude Include="zinx\include\include.h" />
+    <ClInclude Include="zinx\include\log.h" />
+    <ClInclude Include="zinx\include\server.h" />
+    <ClInclude Include="zinx\include\TcpChannel.h" />
+    <ClInclude Include="zinx\include\zinx.h" />
   </ItemGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <Link>
-      <LibraryDependencies>zinx;protobuf;pthread</LibraryDependencies>
+      <LibraryDependencies>protobuf;pthread</LibraryDependencies>
     </Link>
     <ClCompile>
       <AdditionalOptions>-pthread</AdditionalOptions>

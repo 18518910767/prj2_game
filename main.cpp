@@ -68,12 +68,22 @@ void daemonlize()
 
 }
 
-int main()
+int main(int argc, char **argv)
 {
-	daemonlize();
+	if (argc != 2)
+	{
+		cout << "Usage:" << argv[0] << " <debug|daemon>" << endl;
+		return 0;
+	}
 
-	LOG_SetStdOut("/home/marklion/game_std_log.txt");
-	LOG_SetStdErr("/home/marklion/game_err_log.txt");
+	if (0 == strcmp("daemon", argv[1]))
+	{
+		daemonlize();
+
+		LOG_SetStdOut("/home/marklion/game_std_log.txt");
+		LOG_SetStdErr("/home/marklion/game_err_log.txt");
+	}
+
 
 	r.LoadFile();
 
