@@ -91,6 +91,7 @@ void RandomeName::ReleaseName(std::string _name)
 		/*创建姓对象*/
 		FirstName *pxFirst = new FirstName();
 		pxFirst->First = szFirst;
+		m_FirstPool.push_back(pxFirst);
 	}
 
 	/*追加名到姓对象的名向量*/
