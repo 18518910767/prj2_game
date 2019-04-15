@@ -3,7 +3,8 @@
 #include "AOI_wolrd.h"
 #include <iostream>
 #include "RandomeName.h"
-
+#include "GameNPCRole.h"
+#include "TimerChannel.h"
 using namespace std;
 
 class samplePlayer : public AOI_Player {
@@ -67,7 +68,7 @@ void daemonlize()
 	}
 
 }
-
+extern TimerChannel *pxTimerChannel;
 int main(int argc, char **argv)
 {
 	if (argc != 2)
@@ -91,7 +92,11 @@ int main(int argc, char **argv)
 
 	pxServer->init();
 
+	pxTimerChannel = new TimerChannel();
 	pxServer->install_channel(new GameChannel());
+	pxServer->install_channel(pxTimerChannel);
+
+	pxServer->add_role("GameNPCRole", new GameNPCRole());
 
 	pxServer->run();
 	/*

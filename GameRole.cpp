@@ -5,6 +5,7 @@
 #include <algorithm>
 #include <random>
 #include "RandomeName.h"
+#include "GameNPCRole.h"
 
 using namespace std;
 
@@ -151,6 +152,15 @@ bool GameRole::init()
 	{
 		stResp3.pxSender = dynamic_cast<GameRole *> (pxplayer);
 		Server::GetServer()->send_resp(&stResp3);
+	}
+
+	auto allNPC = Server::GetServer()->GetRoleListByCharacter("GameNPCRole");
+	if (NULL != allNPC)
+	{
+		for (auto singleNPC : (*allNPC))
+		{
+			dynamic_cast<GameNPCRole *>(singleNPC)->NotifyNewPlayer(this);
+		}
 	}
 
 	return true;

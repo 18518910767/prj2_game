@@ -81,11 +81,13 @@
     <ClCompile Include="AOI_wolrd.cpp" />
     <ClCompile Include="GameChannel.cpp" />
     <ClCompile Include="GameMessage.cpp" />
+    <ClCompile Include="GameNPCRole.cpp" />
     <ClCompile Include="GameProtocol.cpp" />
     <ClCompile Include="GameRole.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="msg.pb.cpp" />
     <ClCompile Include="RandomeName.cpp" />
+    <ClCompile Include="TimerChannel.cpp" />
     <ClCompile Include="zinx\channel\Achannel.cpp" />
     <ClCompile Include="zinx\channel\TcpChannel.cpp" />
     <ClCompile Include="zinx\log.cpp" />
@@ -99,10 +101,12 @@
     <ClInclude Include="AOI_wolrd.h" />
     <ClInclude Include="GameChannel.h" />
     <ClInclude Include="GameMessage.h" />
+    <ClInclude Include="GameNPCRole.h" />
     <ClInclude Include="GameProtocol.h" />
     <ClInclude Include="GameRole.h" />
     <ClInclude Include="msg.pb.h" />
     <ClInclude Include="RandomeName.h" />
+    <ClInclude Include="TimerChannel.h" />
     <ClInclude Include="zinx\include\Achannel.h" />
     <ClInclude Include="zinx\include\Amessage.h" />
     <ClInclude Include="zinx\include\Aprotocol.h" />

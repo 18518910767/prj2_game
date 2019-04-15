@@ -23,23 +23,28 @@ bool RawData::AppendData(const RawData *pstData)
     return bRet;
 }
 
+/*设置参数中的数据拷贝到对象*/
 bool RawData::SetData(unsigned char * _pucData, int _iLength)
 {
-    bool bRet = false;
-    unsigned char *pucTemp = (unsigned char *)calloc(1UL, _iLength);
-    if (NULL != pucTemp)
-    {
-        memcpy(pucTemp, _pucData, _iLength);
-        if (NULL != pucData)
-        {
-            free(pucData);
-        }
-        pucData = pucTemp;
-        iLength = _iLength;
-        bRet = true;
-    }
+	bool bRet = false;
 
-    return bRet;
+	/*备份参数指定的数据*/
+	unsigned char *pucTmp = (unsigned char *)calloc(1UL, _iLength);
+	if (NULL != pucTmp)
+	{
+		memcpy(pucTmp, _pucData, _iLength);
+		/*原来有数据，释放*/
+		if (NULL != this->pucData)
+		{
+			free(this->pucData);
+			this->pucData = NULL;
+		}
+		this->pucData = pucTmp;
+		this->iLength = _iLength;
+		bRet = true;
+	}
+	
+	return bRet;
 }
 
 RawData::~RawData()

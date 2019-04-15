@@ -9,6 +9,8 @@
 #define GAME_MSG_LOGOFF_SYNCPID 201
 #define GAME_MSG_SUR_PLAYER 202
 
+#define GAME_MSG_TIMEOUT 500
+
 class GameMessage :
 	public IdMessage
 {

@@ -28,7 +28,7 @@ public:
     bool install_channel(Achannel *pxChannel);
 
     /*
-    描述：该函数用于摘除server中的Arole对象。
+    描述：该函数用于摘除server中的Achannel对象。
           摘除后pxChannel对象并没有被释放。
     参数：pxChannel是待摘除对象。
     */

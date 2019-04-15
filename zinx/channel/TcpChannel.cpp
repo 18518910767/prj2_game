@@ -20,25 +20,25 @@ bool TcpListenChannel::TcpAfterConnection(int _iDataFd, struct sockaddr_in *pstC
 
 bool TcpListenChannel::readFd(uint32_t _event, RawData * pstData)
 {
+	/*客户端连接后*/
 	bool bRet = false;
-	
+	/*accept，得到数据套接字*/
 	if (0 != (_event & EPOLLIN))
 	{
-        int iDataFd = -1;
-        struct sockaddr_in stClientAddr;
-        socklen_t lAddrLen = sizeof(stClientAddr);
-        
-        iDataFd = accept(m_fd, (struct sockaddr *)&stClientAddr, &lAddrLen);
-        if (0 <= iDataFd)
-        {
-            bRet = TcpAfterConnection(iDataFd, &stClientAddr);
-        }
-        else
-        {
-            perror("__FUNC__:accept:");
-        }
+		sockaddr_in stClientAddr;
+		socklen_t iclientaddr_length = sizeof(stClientAddr);
+		int idata_socket = accept(m_fd, (sockaddr *)(&stClientAddr), &iclientaddr_length);
+		if (0 <= idata_socket)
+		{
+			/*调用TcpAfterConnection，实现连接到来之后的操作*/
+			bRet = TcpAfterConnection(idata_socket, &stClientAddr);
+		}
+		else
+		{
+			perror("__FUNC__:accept:");
+		}
 	}
-
+		
 	return bRet;
 }
 
@@ -49,43 +49,44 @@ bool TcpListenChannel::writeFd(const RawData * pstData)
 
 bool TcpListenChannel::init()
 {
-    bool bRet = false;
-    int iListenFd = -1;
-    struct sockaddr_in stServaddr;
+	bool bRet = false;
+    /*创建socket*/
+	int isocket = socket(AF_INET, SOCK_STREAM, 0);
+	if (0 <= isocket)
+	{
+		/*绑定*/
+		sockaddr_in stServerAddr;
+		stServerAddr.sin_family = AF_INET;
+		stServerAddr.sin_addr.s_addr = htonl(INADDR_ANY);
+		stServerAddr.sin_port = htons( m_usPort);
 
-    iListenFd = socket(AF_INET, SOCK_STREAM, 0);
-    if (0 <= iListenFd)
-    {
-        memset(&stServaddr,0,sizeof(stServaddr));
-        stServaddr.sin_family = AF_INET;
-        stServaddr.sin_addr.s_addr = htonl(INADDR_ANY);
-        stServaddr.sin_port = htons(m_usPort);
+		/*为socket添加重复绑定属性*/
+		int socketopt = 1;
+		setsockopt(isocket, SOL_SOCKET, SO_REUSEADDR, &socketopt, sizeof(socketopt));
 
-        int opt = 1;
-        setsockopt(iListenFd, SOL_SOCKET, SO_REUSEADDR,  (void *)&opt, sizeof(opt));
-        
-        if (0 == bind(iListenFd, (struct sockaddr *)&stServaddr, sizeof(stServaddr)))
-        {
-            if (0 == listen(iListenFd, 10))
-            {
-                bRet = true;
-                m_fd = iListenFd;
-            }
-            else
-            {
-                perror("__FUNC__:listen:");
-            }
-        }
-        else
-        {
-            perror("__FUNC__:bind:");
-        }
-    }
-    else
-    {
-        perror("__FUNC__:socket:");
-    }
-        
+		if (0 == bind(isocket, (sockaddr *)(&stServerAddr), sizeof(stServerAddr)))
+		{
+			/*转换监听套接字*/
+			if (0 == listen(isocket, 10))
+			{
+				bRet = true;
+				m_fd = isocket;
+			}
+			else
+			{
+				perror("__FUNC__:listen:");
+			}
+		}
+		else
+		{
+			perror("__FUNC__:bind:");
+		}
+	}
+	else
+	{
+		perror("__FUNC__:socket:");
+	}
+
 
 	return bRet;
 }
@@ -127,6 +128,7 @@ bool TcpDataChannel::readFd(uint32_t _event, RawData * pstData)
 {
     bool bRet = false;
 
+	/*若数据和断开连接的事件同时来，先读取数据，后处理断开事件*/
     if (0 != (_event & EPOLLIN))
     {
         bRet = TcpProcDataIn(pstData);
@@ -161,25 +163,25 @@ bool TcpDataChannel::writeFd(const RawData * pstData)
 bool TcpDataChannel::TcpProcDataIn(RawData * pstData)
 {
     bool bRet = false;
-    ssize_t iReadLen = -1;
-    unsigned char aucBuff[1024] = {0};
+    
+	/*收tcp数据，存到pstData中*/
+	unsigned char aucBuff[256];
+	ssize_t iRecvLen = 0;
 
-    while (0 < (iReadLen = recv(m_fd, aucBuff, sizeof(aucBuff), MSG_DONTWAIT)))
-    {
-        unsigned char *pucTempData = (unsigned char *)calloc(1UL, iReadLen + pstData->iLength);
-        if (NULL != pucTempData)
-        {
-            bRet = true;
-            memcpy(pucTempData, pstData->pucData, pstData->iLength);
-            memcpy(pucTempData + pstData->iLength, aucBuff, iReadLen);
-            pstData->iLength += iReadLen;
-            if (NULL != pstData->pucData)
-            {
-                free(pstData->pucData);
-            }
-            pstData->pucData = pucTempData;
-        }
-    }
+
+	/*循环非阻塞recv，每次循环追加读取到的数据到pstData*/
+	while (0 < (iRecvLen = recv(m_fd, aucBuff, sizeof(aucBuff), MSG_DONTWAIT)))
+	{
+		/*申请空间*/
+		unsigned char *pucTemp = (unsigned char *)calloc(1UL, pstData->iLength + iRecvLen);
+		memcpy(pucTemp, pstData->pucData, pstData->iLength);
+		/*拷贝数据*/
+		memcpy(pucTemp + pstData->iLength, aucBuff, iRecvLen);
+		pstData->SetData(pucTemp, pstData->iLength + iRecvLen);
+		free(pucTemp);
+		bRet = true;
+	}
+
 
     std::cout<<"<----------------------------------------->"<<std::endl;
     std::cout<<"recv from "<<m_fd<<":"<<Achannel::Convert2Printable(pstData)<<std::endl;
