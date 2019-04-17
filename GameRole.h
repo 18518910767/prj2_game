@@ -3,17 +3,19 @@
 #include <string>
 #include "AOI_wolrd.h"
 #include "GameMessage.h"
+#include "TimerChannel.h"
 #include <list>
 
 
 class GameRole :
-	public IdMsgRole, public AOI_Player
+	public IdMsgRole, public AOI_Player, public virtual TimerTask
 {
 public:
 	GameRole();
 	/*定义玩家姓名和ID作为成员变量*/
 	std::string szName;
 	int pid = 0;
+	bool bCanSpeek = true;
 
 	float x;
 	float y;//高
@@ -43,5 +45,9 @@ public:
 	void ViewLost(std::list<AOI_Player *> &newsurlist,std::list<AOI_Player *> &oldsurlist);
 	/*处理视野出现*/
 	void ViewAppear(std::list<AOI_Player *> &newsurlist, std::list<AOI_Player *> &oldsurlist);
+
+	// 通过 TimerTask 继承
+	virtual int GetPeroid() override;
+	virtual bool TimeOutProc() override;
 };
 

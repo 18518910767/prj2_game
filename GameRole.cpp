@@ -25,7 +25,7 @@ public:
 	}
 
 };
-
+extern TimerChannel *pxTimerChannel;
 class id2proc :public IIdMsgProc {
 public:
 
@@ -38,16 +38,61 @@ public:
 		auto talkContent = dynamic_cast<pb::Talk *> (pxInMsg->pxGameMsg);
 		auto pxGameRole = dynamic_cast<GameRole *>(_pxRole);
 
+		if (true != pxGameRole->bCanSpeek)
+		{
+			auto allNPC = Server::GetServer()->GetRoleListByCharacter("GameNPCRole");
+			if (NULL != allNPC)
+			{
+				for (auto singleNPC : (*allNPC))
+				{
+					auto pxNPC = dynamic_cast<GameNPCRole *>(singleNPC);
+					Response stResp2self;
+					stResp2self.pxMsg = pxNPC->MakeTalkBroadcast("@" + pxGameRole->szName + ":you cannot speek");
+					stResp2self.pxSender = pxGameRole;
+					Server::GetServer()->send_resp(&stResp2self);
+				}
+			}
+			return true;
+		}
+
+		pxGameRole->bCanSpeek = false;
+		pxTimerChannel->Add_Task(pxGameRole);
+
 		Response stResp;
-		stResp.pxMsg = pxGameRole->MakeTalkBroadcast(talkContent->content());
+		string szTalkContent = talkContent->content();
+		stResp.pxMsg = pxGameRole->MakeTalkBroadcast(szTalkContent);
+
 		/*获取所有玩家*/
 		auto plist = Server::GetServer()->GetRoleListByCharacter("GameRole");
-		for (auto player : *plist)
+
+		/*若包含@，则取出收消息对象并发送*/
+		if ('@' == szTalkContent[0])
 		{
-			/*发送聊天信息*/
-			stResp.pxSender = dynamic_cast<GameRole *>(player);
-			Server::GetServer()->send_resp(&stResp);
+			int posofmh = szTalkContent.find(":");
+			string szDestPlayerName = szTalkContent.substr(1, posofmh - 1);
+			for (auto player : *plist)
+			{
+				/*比较玩家是否是待发送玩家*/
+				auto pxDestGameRole = dynamic_cast<GameRole *>(player);
+				if (pxDestGameRole->szName == szDestPlayerName)
+				{
+					stResp.pxSender = pxDestGameRole;
+					Server::GetServer()->send_resp(&stResp);
+					break;
+				}
+			}
 		}
+		else
+		{
+			for (auto player : *plist)
+			{
+				/*发送聊天信息*/
+				stResp.pxSender = dynamic_cast<GameRole *>(player);
+				Server::GetServer()->send_resp(&stResp);
+			}
+		}
+		
+
 
 		return true;
 	}
@@ -330,4 +375,18 @@ void GameRole::ViewAppear(std::list<AOI_Player*>& newsurlist, std::list<AOI_Play
 			Server::GetServer()->send_resp(&stResp2self);
 		}
 	}
+}
+
+int GameRole::GetPeroid()
+{
+	return 10;
+}
+
+bool GameRole::TimeOutProc()
+{
+	bCanSpeek = true;
+
+	pxTimerChannel->Del_Task(this);
+
+	return false;
 }

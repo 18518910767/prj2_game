@@ -1,4 +1,5 @@
 #include "GameNPCRole.h"
+#include "msg.pb.h"
 class id500proc :public IIdMsgProc
 {
 public:
@@ -57,7 +58,7 @@ int GameNPCRole::GetPeroid()
 {
 	return 10;
 }
-
+static bool bforward = true;
 bool GameNPCRole::TimeOutProc()
 {
 	Response stResp;
@@ -72,5 +73,27 @@ bool GameNPCRole::TimeOutProc()
 			Server::GetServer()->send_resp(&stResp);
 		}
 	}
+
+	Request stReq;
+	GameMessage *pxFakeMove = new GameMessage(3);
+	pb::Position *pxNewpos = new pb::Position();
+	if (true == bforward)
+	{
+		pxNewpos->set_x(x + 5);
+		bforward = false;
+	}
+	else
+	{
+		bforward = true;
+		pxNewpos->set_x(x - 5);
+	}
+	pxNewpos->set_y(y);
+	pxNewpos->set_z(z);
+	pxNewpos->set_v(v);
+	pxFakeMove->pxGameMsg = pxNewpos;
+	stReq.pxMsg = pxFakeMove;
+	stReq.pxProcessor = this;
+	Server::GetServer()->handle(&stReq);
+
 	return true;
 }

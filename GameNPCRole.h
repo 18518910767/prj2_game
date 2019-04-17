@@ -2,7 +2,7 @@
 #include "GameRole.h"
 #include "TimerChannel.h"
 class GameNPCRole :
-	public GameRole,public TimerTask
+	public virtual GameRole,public virtual TimerTask
 {
 public:
 	GameNPCRole();
